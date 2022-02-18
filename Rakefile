@@ -1,14 +1,29 @@
+require 'rake/testtask'
+require 'find'
+
 desc 'Say hello'
 task :hello do
   puts "Hello there. This is the 'hello' task."
 end
 
 desc 'Run tests'
-task :test do
-  system('ruby ./test/todolist_project_test.rb')
+task :default => :test
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
 end
 
 desc 'Updates local repo'
 task :update do
   system("git fetch -u origin main")
+end
+
+desc 'Lists source files'
+task :list_files do
+  Find.find('.') do |name|
+    next if name.include?('/.')
+    puts name if File.file?(name)
+  end
 end
